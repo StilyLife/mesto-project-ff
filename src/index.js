@@ -2,6 +2,7 @@ import "./pages/index.css";
 import { initialCards } from "./components/cards.js";
 import { createCard, deleteCard, toggleLike } from "./components/card.js";
 import { openPopup, closePopup } from "./components/modal.js";
+import { validateForm, nameInput, jobInput, nameError, jobError, saveButton } from "./components/validation.js";
 
 const placesContainer = document.querySelector(".places__list");
 const placeTemplate = document.querySelector("#card-template").content;
@@ -14,13 +15,9 @@ const profileJob = document.querySelector(".profile__description");
 const popupEdit = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupImage = document.querySelector(".popup_type_image");
-const nameInput = popupEdit.querySelector(".popup__input_type_name");
-const jobInput = popupEdit.querySelector(".popup__input_type_description");
 const formEditProfile = popupEdit.querySelector(".popup__form");
 const formNewCard = popupNewCard.querySelector(".popup__form");
-const newCardNameInput = formNewCard.querySelector(
-  ".popup__input_type_card-name"
-);
+const newCardNameInput = formNewCard.querySelector(".popup__input_type_card-name");
 const newCardLinkInput = formNewCard.querySelector(".popup__input_type_url");
 const popupImageElement = popupImage.querySelector(".popup__image");
 const popupCaption = popupImage.querySelector(".popup__caption");
@@ -52,29 +49,39 @@ function openPopupImage(name, link) {
   openPopup(popupImage);
 }
 
-// Обработчики для кнопок открытия попапов
-profileEditButton.addEventListener("click", () => {
+// Обработчик открытия формы редактирования профиля
+function handleProfileEditButtonClick() {
   nameInput.value = profileName.textContent;
   jobInput.value = profileJob.textContent;
+  nameError.textContent = "";
+  jobError.textContent = "";
+  nameInput.setCustomValidity("");
+  jobInput.setCustomValidity("");
+  nameInput.classList.remove('popup__input_error');
+  jobInput.classList.remove('popup__input_error');
+  validateForm();
   openPopup(popupEdit);
-});
+}
 
-buttonOpenPopupCard.addEventListener("click", () => openPopup(popupNewCard));
+// Обработчик открытия формы добавления новой карточки
+function handleOpenPopupCardClick() {
+  openPopup(popupNewCard);
+}
 
 // Обработчики для кнопок закрытия попапов
-closeButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const popup = button.closest(".popup");
-    closePopup(popup);
-  });
-});
+function handleCloseButtonClick(evt) {
+  const popup = evt.target.closest(".popup");
+  closePopup(popup);
+}
 
 // Обработчик отправки формы редактирования профиля
 function handleFormEditProfileSubmit(evt) {
   evt.preventDefault();
-  profileName.textContent = nameInput.value;
-  profileJob.textContent = jobInput.value;
-  closePopup(popupEdit);
+  if (!saveButton.disabled) {
+    profileName.textContent = nameInput.value;
+    profileJob.textContent = jobInput.value;
+    closePopup(popupEdit);
+  }
 }
 
 // Обработчик отправки формы добавления новой карточки
@@ -98,4 +105,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   formEditProfile.addEventListener("submit", handleFormEditProfileSubmit);
   formNewCard.addEventListener("submit", handleFormNewCardSubmit);
+  nameInput.addEventListener("input", validateForm);
+  jobInput.addEventListener("input", validateForm);
 });
