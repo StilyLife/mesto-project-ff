@@ -4,8 +4,15 @@ const saveButton = document.querySelector('.popup__button');
 const nameError = document.querySelector('.popup__error_type_name');
 const jobError = document.querySelector('.popup__error_type_description');
 
+const newCardNameInput = document.querySelector('.popup__input_type_card-name');
+const newCardLinkInput = document.querySelector('.popup__input_type_url');
+const newCardNameError = document.querySelector('.popup__error_type_card-name');
+const newCardLinkError = document.querySelector('.popup__error_type_url');
+
 const namePattern = /^[A-Za-zА-Яа-яЁё\s-]{2,40}$/;
 const jobPattern = /^[A-Za-zА-Яа-яЁё\s-]{2,200}$/;
+const cardNamePattern = /^[A-Za-zА-Яа-яЁё\s-]{2,30}$/;
+const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
 
 function validateName() {
   const nameValue = nameInput.value.trim();
@@ -68,7 +75,65 @@ function validateForm() {
   }
 }
 
+function validateNewCardName() {
+  const nameValue = newCardNameInput.value.trim();
+  if (nameValue.length === 0) {
+    newCardNameInput.setCustomValidity("Вы пропустили это поле.");
+    newCardNameError.textContent = newCardNameInput.validationMessage;
+    newCardNameInput.classList.add('popup__input_error');
+    return false;
+  } else if (nameValue.length < 2 || nameValue.length > 30) {
+    newCardNameInput.setCustomValidity("Название должно быть от 2 до 30 символов.");
+    newCardNameError.textContent = newCardNameInput.validationMessage;
+    newCardNameInput.classList.add('popup__input_error');
+    return false;
+  } else if (!cardNamePattern.test(nameValue)) {
+    newCardNameInput.setCustomValidity("Название может содержать латинские и кириллические буквы, знаки дефиса и пробелы.");
+    newCardNameError.textContent = newCardNameInput.validationMessage;
+    newCardNameInput.classList.add('popup__input_error');
+    return false;
+  } else {
+    newCardNameInput.setCustomValidity("");
+    newCardNameError.textContent = "";
+    newCardNameInput.classList.remove('popup__input_error');
+    return true;
+  }
+}
+
+function validateNewCardLink() {
+  const linkValue = newCardLinkInput.value.trim();
+  if (linkValue.length === 0) {
+    newCardLinkInput.setCustomValidity("Вы пропустили это поле.");
+    newCardLinkError.textContent = newCardLinkInput.validationMessage;
+    newCardLinkInput.classList.add('popup__input_error');
+    return false;
+  } else if (!urlPattern.test(linkValue)) {
+    newCardLinkInput.setCustomValidity("Пожалуйста, введите корректный URL.");
+    newCardLinkError.textContent = newCardLinkInput.validationMessage;
+    newCardLinkInput.classList.add('popup__input_error');
+    return false;
+  } else {
+    newCardLinkInput.setCustomValidity("");
+    newCardLinkError.textContent = "";
+    newCardLinkInput.classList.remove('popup__input_error');
+    return true;
+  }
+}
+
+function validateNewCardForm() {
+  const isNameValid = validateNewCardName();
+  const isLinkValid = validateNewCardLink();
+  saveButton.disabled = !isNameValid || !isLinkValid;
+  if (saveButton.disabled) {
+    saveButton.classList.add('popup__button_disabled');
+  } else {
+    saveButton.classList.remove('popup__button_disabled');
+  }
+}
+
 nameInput.addEventListener('input', validateForm);
 jobInput.addEventListener('input', validateForm);
+newCardNameInput.addEventListener('input', validateNewCardForm);
+newCardLinkInput.addEventListener('input', validateNewCardForm);
 
-export { validateForm, validateName, validateJob, nameInput, jobInput, nameError, jobError, saveButton };
+export { validateForm, validateName, validateJob, nameInput, jobInput, nameError, jobError, saveButton, validateNewCardForm, validateNewCardName, validateNewCardLink, newCardNameInput, newCardLinkInput, newCardNameError, newCardLinkError };

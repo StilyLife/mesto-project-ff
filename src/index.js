@@ -2,7 +2,17 @@ import "./pages/index.css";
 import { initialCards } from "./components/cards.js";
 import { createCard, deleteCard, toggleLike } from "./components/card.js";
 import { openPopup, closePopup } from "./components/modal.js";
-import { validateForm, nameInput, jobInput, nameError, jobError, saveButton } from "./components/validation.js";
+import { 
+  validateForm, 
+  nameInput, 
+  jobInput, 
+  nameError, 
+  jobError, 
+  saveButton, 
+  validateNewCardForm, 
+  newCardNameInput, 
+  newCardLinkInput 
+} from "./components/validation.js";
 
 const placesContainer = document.querySelector(".places__list");
 const placeTemplate = document.querySelector("#card-template").content;
@@ -17,8 +27,6 @@ const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupImage = document.querySelector(".popup_type_image");
 const formEditProfile = popupEdit.querySelector(".popup__form");
 const formNewCard = popupNewCard.querySelector(".popup__form");
-const newCardNameInput = formNewCard.querySelector(".popup__input_type_card-name");
-const newCardLinkInput = formNewCard.querySelector(".popup__input_type_url");
 const popupImageElement = popupImage.querySelector(".popup__image");
 const popupCaption = popupImage.querySelector(".popup__caption");
 
@@ -65,6 +73,8 @@ function handleProfileEditButtonClick() {
 
 // Обработчик открытия формы добавления новой карточки
 function handleOpenPopupCardClick() {
+  formNewCard.reset(); // Очищаем форму
+  validateNewCardForm(); // Проверяем форму
   openPopup(popupNewCard);
 }
 
@@ -107,4 +117,6 @@ document.addEventListener("DOMContentLoaded", function () {
   formNewCard.addEventListener("submit", handleFormNewCardSubmit);
   nameInput.addEventListener("input", validateForm);
   jobInput.addEventListener("input", validateForm);
+  newCardNameInput.addEventListener("input", validateNewCardForm);
+  newCardLinkInput.addEventListener("input", validateNewCardForm);
 });
