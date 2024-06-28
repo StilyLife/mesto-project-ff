@@ -2,17 +2,7 @@ import "./pages/index.css";
 import { initialCards } from "./components/cards.js";
 import { createCard, deleteCard, toggleLike } from "./components/card.js";
 import { openPopup, closePopup } from "./components/modal.js";
-import { 
-  validateForm, 
-  nameInput, 
-  jobInput, 
-  nameError, 
-  jobError, 
-  saveButton, 
-  validateNewCardForm, 
-  newCardNameInput, 
-  newCardLinkInput 
-} from "./components/validation.js";
+import { enableValidation, clearValidation } from "./components/validation.js";
 
 const placesContainer = document.querySelector(".places__list");
 const placeTemplate = document.querySelector("#card-template").content;
@@ -29,6 +19,15 @@ const formEditProfile = popupEdit.querySelector(".popup__form");
 const formNewCard = popupNewCard.querySelector(".popup__form");
 const popupImageElement = popupImage.querySelector(".popup__image");
 const popupCaption = popupImage.querySelector(".popup__caption");
+
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_error',
+  errorClass: 'popup__error_visible'
+};
 
 // Функция для рендеринга всех карточек
 function render() {
@@ -59,22 +58,18 @@ function openPopupImage(name, link) {
 
 // Обработчик открытия формы редактирования профиля
 function handleProfileEditButtonClick() {
+  const nameInput = formEditProfile.querySelector('.popup__input_type_name');
+  const jobInput = formEditProfile.querySelector('.popup__input_type_description');
   nameInput.value = profileName.textContent;
   jobInput.value = profileJob.textContent;
-  nameError.textContent = "";
-  jobError.textContent = "";
-  nameInput.setCustomValidity("");
-  jobInput.setCustomValidity("");
-  nameInput.classList.remove('popup__input_error');
-  jobInput.classList.remove('popup__input_error');
-  validateForm();
+  clearValidation(formEditProfile, validationConfig);
   openPopup(popupEdit);
 }
 
 // Обработчик открытия формы добавления новой карточки
 function handleOpenPopupCardClick() {
   formNewCard.reset(); // Очищаем форму
-  validateNewCardForm(); // Проверяем форму
+  clearValidation(formNewCard, validationConfig);
   openPopup(popupNewCard);
 }
 
@@ -87,18 +82,20 @@ function handleCloseButtonClick(evt) {
 // Обработчик отправки формы редактирования профиля
 function handleFormEditProfileSubmit(evt) {
   evt.preventDefault();
-  if (!saveButton.disabled) {
-    profileName.textContent = nameInput.value;
-    profileJob.textContent = jobInput.value;
-    closePopup(popupEdit);
-  }
+  const nameInput = formEditProfile.querySelector('.popup__input_type_name');
+  const jobInput = formEditProfile.querySelector('.popup__input_type_description');
+  profileName.textContent = nameInput.value;
+  profileJob.textContent = jobInput.value;
+  closePopup(popupEdit);
 }
 
 // Обработчик отправки формы добавления новой карточки
 function handleFormNewCardSubmit(evt) {
   evt.preventDefault();
-  const name = newCardNameInput.value;
-  const link = newCardLinkInput.value;
+  const nameInput = formNewCard.querySelector('.popup__input_type_card-name');
+  const linkInput = formNewCard.querySelector('.popup__input_type_url');
+  const name = nameInput.value;
+  const link = linkInput.value;
   const newCard = createCard({ name, link }, toggleLike, openPopupImage, placeTemplate);
   renderCard(newCard);
   closePopup(popupNewCard);
@@ -108,6 +105,7 @@ function handleFormNewCardSubmit(evt) {
 // Инициализация при загрузке страницы
 document.addEventListener("DOMContentLoaded", function () {
   render();
+  enableValidation(validationConfig);
   profileEditButton.addEventListener("click", handleProfileEditButtonClick);
   buttonOpenPopupCard.addEventListener("click", handleOpenPopupCardClick);
   closeButtons.forEach((button) => {
@@ -115,8 +113,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   formEditProfile.addEventListener("submit", handleFormEditProfileSubmit);
   formNewCard.addEventListener("submit", handleFormNewCardSubmit);
-  nameInput.addEventListener("input", validateForm);
-  jobInput.addEventListener("input", validateForm);
-  newCardNameInput.addEventListener("input", validateNewCardForm);
-  newCardLinkInput.addEventListener("input", validateNewCardForm);
 });

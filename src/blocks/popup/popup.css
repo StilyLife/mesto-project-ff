@@ -31,8 +31,8 @@
   margin-top: 5px;
 }
 
-.popup__input-error {
-  border-bottom: 2px solid red;
+.popup__input_type_error {
+  border-bottom: 1px solid red;
 }
 
 .popup__button_disabled {
