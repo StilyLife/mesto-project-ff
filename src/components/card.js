@@ -1,19 +1,37 @@
+import { likeCard, unlikeCard } from "./api.js";
+
 // Функция для удаления карточки 
 export function deleteCard(cardElement) { 
   cardElement.remove(); 
 } 
  
-// Функция для лайка карточки 
-export function toggleLike(event) { 
-  event.target.classList.toggle("card__like-button_is-active"); 
-} 
+// Функция для лайка карточки
+export function toggleLike(cardElement, cardId) {
+  const likeButton = cardElement.querySelector(".card__like-button");
+  const likeCountElement = cardElement.querySelector(".card__like-count");
+  const isLiked = likeButton.classList.contains("card__like-button_is-active");
+
+  if (isLiked) {
+    unlikeCard(cardId).then(cardData => {
+      likeButton.classList.remove("card__like-button_is-active");
+      likeCountElement.textContent = cardData.likes.length;
+    }).catch(err => console.error(err));
+  } else {
+    likeCard(cardId).then(cardData => {
+      likeButton.classList.add("card__like-button_is-active");
+      likeCountElement.textContent = cardData.likes.length;
+    }).catch(err => console.error(err));
+  }
+}
  
 // Функция для создания карточки 
-export function createCard( 
-  { name, link }, 
-  handleLike, 
-  handleImageClick, 
-  placeTemplate 
+export function createCard(
+  { name, link, likes, _id, owner },
+  handleLike,
+  handleImageClick,
+  placeTemplate,
+  currentUserId,
+  openDeleteConfirmationPopup
 ) { 
   const cardElement = placeTemplate 
     .querySelector(".places__item") 
@@ -26,13 +44,20 @@ export function createCard(
   cardImage.src = link; 
   cardImage.alt = name; 
  
-  const deleteButton = cardElement.querySelector(".card__delete-button"); 
-  deleteButton.addEventListener("click", () => deleteCard(cardElement)); 
- 
-  const likeButton = cardElement.querySelector(".card__like-button"); 
-  likeButton.addEventListener("click", handleLike); 
+  const deleteButton = cardElement.querySelector(".card__delete-button");
+  if (owner._id !== currentUserId) {
+    deleteButton.remove();
+  } else {
+    deleteButton.addEventListener("click", () => openDeleteConfirmationPopup(_id, cardElement));
+  }
+
+  const likeButton = cardElement.querySelector(".card__like-button");
+  likeButton.addEventListener("click", () => handleLike(cardElement, _id));
+
+  const likeCountElement = cardElement.querySelector(".card__like-count");
+  likeCountElement.textContent = likes.length;
  
   cardImage.addEventListener("click", () => handleImageClick(name, link)); 
  
   return cardElement; 
-} 
+}
