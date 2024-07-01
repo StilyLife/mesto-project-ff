@@ -1,7 +1,7 @@
 const enableValidation = (config) => {
   const forms = document.querySelectorAll(config.formSelector);
   forms.forEach((form) => {
-    form.addEventListener('submit', (evt) => {
+    form.addEventListener("submit", (evt) => {
       evt.preventDefault();
     });
     setEventListeners(form, config);
@@ -9,11 +9,13 @@ const enableValidation = (config) => {
 };
 
 const setEventListeners = (formElement, config) => {
-  const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+  const inputList = Array.from(
+    formElement.querySelectorAll(config.inputSelector)
+  );
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
   toggleButtonState(inputList, buttonElement, config);
   inputList.forEach((inputElement) => {
-    inputElement.addEventListener('input', () => {
+    inputElement.addEventListener("input", () => {
       checkInputValidity(inputElement, config);
       toggleButtonState(inputList, buttonElement, config);
     });
@@ -23,7 +25,12 @@ const setEventListeners = (formElement, config) => {
 const checkInputValidity = (inputElement, config) => {
   const errorElement = inputElement.nextElementSibling;
   if (!inputElement.validity.valid) {
-    showInputError(inputElement, errorElement, inputElement.dataset.error || inputElement.validationMessage, config);
+    showInputError(
+      inputElement,
+      errorElement,
+      inputElement.dataset.error || inputElement.validationMessage,
+      config
+    );
   } else {
     hideInputError(inputElement, errorElement, config);
   }
@@ -31,7 +38,12 @@ const checkInputValidity = (inputElement, config) => {
   // Добавляем проверку на "Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
   const pattern = /^[A-Za-zА-Яа-яЁё\s-]+$/;
   if (!pattern.test(inputElement.value) && inputElement.value.length > 0) {
-    showInputError(inputElement, errorElement, "Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы", config);
+    showInputError(
+      inputElement,
+      errorElement,
+      "Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы",
+      config
+    );
   }
 };
 
@@ -43,7 +55,7 @@ const showInputError = (inputElement, errorElement, errorMessage, config) => {
 
 const hideInputError = (inputElement, errorElement, config) => {
   inputElement.classList.remove(config.inputErrorClass);
-  errorElement.textContent = '';
+  errorElement.textContent = "";
   errorElement.classList.remove(config.errorClass);
 };
 
@@ -62,7 +74,9 @@ const hasInvalidInput = (inputList) => {
 };
 
 const clearValidation = (formElement, config) => {
-  const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+  const inputList = Array.from(
+    formElement.querySelectorAll(config.inputSelector)
+  );
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
   inputList.forEach((inputElement) => {
     const errorElement = inputElement.nextElementSibling;
