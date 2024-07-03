@@ -47,9 +47,14 @@ const validationConfig = {
 };
 
 let currentUserId;
-let nameInput, jobInput, submitButtonEditProfile;
-let cardNameInput, linkInput, submitButtonNewCard;
-let avatarUrlInput, submitButtonAvatar;
+const nameInput = formEditProfile.querySelector(".popup__input_type_name");
+const jobInput = formEditProfile.querySelector(".popup__input_type_description");
+const submitButtonEditProfile = formEditProfile.querySelector(".popup__button");
+const cardNameInput = formNewCard.querySelector(".popup__input_type_card-name");
+const linkInput = formNewCard.querySelector(".popup__input_type_url");
+const submitButtonNewCard = formNewCard.querySelector(".popup__button");
+const avatarUrlInput = formAvatar.querySelector(".popup__input_type_avatar");
+const submitButtonAvatar = formAvatar.querySelector(".popup__button");
 const avatarElement = document.querySelector(".profile__image");
 
 // Функция для рендеринга всех карточек
@@ -205,8 +210,8 @@ document.addEventListener("DOMContentLoaded", function () {
   Promise.all([getUserInfo(), getInitialCards()])
     .then(([userData, cards]) => {
       currentUserId = userData._id;
-      profileName.textContent = userData.name; // Устанавливаем имя пользователя
-      profileJob.textContent = userData.about; // Устанавливаем занятие пользователя
+      profileName.textContent = userData.name;
+      profileJob.textContent = userData.about;
       avatarElement.style.backgroundImage = `url(${userData.avatar})`;
 
       cards.forEach((item) => {
@@ -222,17 +227,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     })
     .catch((err) => console.error(err));
-
-  nameInput = formEditProfile.querySelector(".popup__input_type_name");
-  jobInput = formEditProfile.querySelector(".popup__input_type_description");
-  submitButtonEditProfile = formEditProfile.querySelector(".popup__button");
-
-  cardNameInput = formNewCard.querySelector(".popup__input_type_card-name");
-  linkInput = formNewCard.querySelector(".popup__input_type_url");
-  submitButtonNewCard = formNewCard.querySelector(".popup__button");
-
-  avatarUrlInput = formAvatar.querySelector(".popup__input_type_avatar");
-  submitButtonAvatar = formAvatar.querySelector(".popup__button");
 
   profileEditButton.addEventListener("click", handleProfileEditButtonClick);
   buttonOpenPopupCard.addEventListener("click", handleOpenPopupCardClick);
